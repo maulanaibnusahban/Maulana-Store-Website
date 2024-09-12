@@ -2,35 +2,36 @@
 session_start();
 include 'koneksi.php';
 
-$pelanggan=$_POST['username'];
-$password=$_POST['password'];
+$pelanggan = $_POST['username'];
+$password = $_POST['password'];
 
-$sql="SELECT * FROM tbluser WHERE user='$pelanggan' AND pass='$password'";
+$sql = "SELECT * FROM tbluser WHERE user='$pelanggan' AND pass='$password'";
 
-$hasil=$koneksi -> query ($sql);
+$hasil = $koneksi->query($sql);
 
-$row=$hasil -> fetch_assoc();
-echo $row['sebagai'];
+// Fetch row setelah cek jumlah baris
+if ($hasil->num_rows) {
+    $row = $hasil->fetch_assoc();
 
-if ($hasil->num_rows){
-    if($row['sebagai'] == 'admin'){
+    if ($row['sebagai'] == 'admin') {
+        $_SESSION['login'] = 'sukses';
+        $_SESSION['user'] = $row['user'];
+        $_SESSION['foto'] = $row['foto'];
+        $_SESSION['user'] = $row['sebagai'];
         header('Location: ../website/landing-page.php');
-        $_SESSION['login']='sukses';
-        $_SESSION['user']=$row['user'];
-        $_SESSION['foto']=$row['foto'];
-        $_SESSION['user']=$row['sebagai'];
+        exit;
     } else {
+        $_SESSION['login'] = 'sukses';
+        $_SESSION['user'] = $row['user'];
+        $_SESSION['foto'] = $row['foto'];
+        $_SESSION['user'] = $row['sebagai'];
         header('Location: ../website/landing-page-user.php');
-        $_SESSION['login']='sukses';
-        $_SESSION['user']=$row['user'];
-        $_SESSION['foto']=$row['foto'];
-        $_SESSION['user']=$row['sebagai'];
-    };
-    
-   
+        exit;
+    }
 } else {
+    $_SESSION['login'] = 'gagal';
     header('Location: ../index.php');
-    $_SESSION['login']='gagal';
-};
-
+    exit;
+}
 ?>
+
